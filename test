@@ -1,0 +1,21 @@
+#!/usr/bin/env scheme --program
+(import (quickcheck) (chezscheme))
+
+(define (involutes? f v) (equal? (f (f v)) v))
+(define reverse-involution?
+  (property ([vs (arbitrary-list arbitrary-natural)])
+    (label (format "length ~d" (length vs))
+      (involutes? reverse vs))))
+
+(quickcheck reverse-involution?)
+
+(define (broken-reverse ls)
+  (if (> (length ls) 10)
+      (list-head ls 10)
+      (reverse ls)))
+
+(define broken-reverse-involution?
+  (property ([vs (arbitrary-list arbitrary-natural)])
+    (involutes? broken-reverse vs)))
+
+(quickcheck broken-reverse-involution?)
